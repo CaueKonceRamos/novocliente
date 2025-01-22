@@ -17,6 +17,13 @@
             });
         }
 
+        function toggleCadastroInssFields() {
+            const cadastroInss = document.getElementById('cadastro_inss').value;
+            const field = document.querySelector('.cadastro-inss-field');
+            field.style.display = cadastroInss === 'sim' ? 'block' : 'none';
+            field.querySelector('input').required = cadastroInss === 'sim';
+        }
+
         function generateDocument(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
@@ -52,48 +59,52 @@
             doc.text(`Telefone: ${data.telefone}`, 10, 170);
             doc.text(`E-mail: ${data.email}`, 10, 180);
 
+            doc.addPage();
             doc.setFontSize(12);
             doc.setFont("helvetica", "bold");
-            doc.text("INFORMAÇÕES PROFISSIONAIS:", 10, 190);
+            doc.text("INFORMAÇÕES PROFISSIONAIS:", 10, 10);
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text(`Encontra-se Empregado: ${data.empregado}`, 10, 200);
-            doc.text(`Profissão: ${data.profissao}`, 10, 210);
-            doc.text(`Local de Trabalho: ${data.local_trabalho}`, 10, 220);
-            doc.text(`Cargo: ${data.cargo}`, 10, 230);
+            doc.text(`Encontra-se Empregado: ${data.empregado}`, 10, 20);
+            doc.text(`Profissão: ${data.profissao}`, 10, 30);
+            doc.text(`Local de Trabalho: ${data.local_trabalho}`, 10, 40);
+            doc.text(`Cargo: ${data.cargo}`, 10, 50);
 
             doc.setFontSize(12);
             doc.setFont("helvetica", "bold");
-            doc.text("CONTRIBUIÇÃO:", 10, 240);
+            doc.text("CONTRIBUIÇÃO:", 10, 60);
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text(`Contribuí para o INSS: ${data.contribui_inss}`, 10, 250);
-            doc.text(`Qual o mês e ano de sua última Contribuição: ${data.ultima_contribuicao}`, 10, 260);
-            doc.text(`Já possui cadastro e senha para o INSS: ${data.cadastro_inss}`, 10, 270);
-            doc.text(`Possuí o CadÚnico: ${data.cadunico}`, 10, 280);
+            doc.text(`Contribuí para o INSS: ${data.contribui_inss}`, 10, 70);
+            doc.text(`Qual o mês e ano de sua última Contribuição: ${data.ultima_contribuicao}`, 10, 80);
+            doc.text(`Já possui cadastro e senha para o INSS: ${data.cadastro_inss}`, 10, 90);
+            if (data.cadastro_inss === 'sim') {
+                doc.text(`Senha do INSS: ${data.senha_inss}`, 10, 100);
+            }
+            doc.text(`Possuí o CadÚnico: ${data.cadunico}`, 10, 110);
 
             doc.setFontSize(12);
             doc.setFont("helvetica", "bold");
-            doc.text("BENEFÍCIOS POR INCAPACIDADE:", 10, 290);
+            doc.text("BENEFÍCIOS POR INCAPACIDADE:", 10, 120);
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text(`Possui Incapacidade: ${data.incapacidade}`, 10, 300);
+            doc.text(`Possui Incapacidade: ${data.incapacidade}`, 10, 130);
             if (data.incapacidade === 'sim') {
-                doc.text(`Qual a Patologia: ${data.patologia}`, 10, 310);
-                doc.text(`Desde Quando: ${data.desde_quando}`, 10, 320);
-                doc.text(`Possuí Exames/Relatórios: ${data.exames}`, 10, 330);
+                doc.text(`Qual a Patologia: ${data.patologia}`, 10, 140);
+                doc.text(`Desde Quando: ${data.desde_quando}`, 10, 150);
+                doc.text(`Possuí Exames/Relatórios: ${data.exames}`, 10, 160);
             }
 
             doc.setFontSize(12);
             doc.setFont("helvetica", "bold");
-            doc.text("OBSERVAÇÕES ADICIONAIS:", 10, 340);
+            doc.text("OBSERVAÇÕES ADICIONAIS:", 10, 170);
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text(`Como chegou até nós: ${data.observacoes}`, 10, 350);
+            doc.text(`Como chegou até nós: ${data.observacoes}`, 10, 180);
 
             doc.save('ficha_de_cadastro.pdf');
         }
@@ -163,11 +174,11 @@
                         </div>
                         <div>
                             <label for="cpf" class="block text-sm font-medium text-gray-700">CPF:</label>
-                            <input type="text" id="cpf" name="cpf" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            <input type="text" id="cpf" name="cpf" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" placeholder="000.000.000-00">
                         </div>
                         <div>
                             <label for="rg" class="block text-sm font-medium text-gray-700">RG:</label>
-                            <input type="text" id="rg" name="rg" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            <input type="text" id="rg" name="rg" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required pattern="\d{2}\.\d{3}\.\d{3}-\d{1}" placeholder="00.000.000-0">
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label for="endereco" class="block text-sm font-medium text-gray-700">Endereço Completo:</label>
@@ -194,8 +205,36 @@
                             <input type="text" id="cidade" name="cidade" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
                         </div>
                         <div>
-                            <label for="estado" class="block text-sm font-medium text-gray-700">Estado:</label>
-                            <input type="text" id="estado" name="estado" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            <label for="estado" class="block text-sm font-medium text-gray-700">Estado :</label>
+                            <select id="estado" name="estado" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                                <option value="Acre">Acre</option>
+                                <option value="Alagoas">Alagoas</option>
+                                <option value="Amapá">Amapá</option>
+                                <option value="Amazonas">Amazonas</option>
+                                <option value="Bahia">Bahia</option>
+                                <option value="Ceará">Ceará</option>
+                                <option value="Distrito Federal">Distrito Federal</option>
+                                <option value="Espírito Santo">Espírito Santo</option>
+                                <option value="Goiás">Goiás</option>
+                                <option value="Maranhão">Maranhão</option>
+                                <option value="Mato Grosso">Mato Grosso</option>
+                                <option value="Mato Grosso do Sul">Mato Grosso do Sul</option>
+                                <option value="Minas Gerais">Minas Gerais</option>
+                                <option value="Pará">Pará</option>
+                                <option value="Paraíba">Paraíba</option>
+                                <option value="Paraná">Paraná</option>
+                                <option value="Pernambuco">Pernambuco</option>
+                                <option value="Piauí">Piauí</option>
+                                <option value="Rio de Janeiro">Rio de Janeiro</option>
+                                <option value="Rio Grande do Norte">Rio Grande do Norte</option>
+                                <option value="Rio Grande do Sul">Rio Grande do Sul</option>
+                                <option value="Rondônia">Rondônia</option>
+                                <option value="Roraima">Roraima</option>
+                                <option value="Santa Catarina">Santa Catarina</option>
+                                <option value="São Paulo">São Paulo</option>
+                                <option value="Sergipe">Sergipe</option>
+                                <option value="Tocantins">Tocantins</option>
+                            </select>
                         </div>
                         <div>
                             <label for="cep" class="block text-sm font-medium text-gray-700">CEP:</label>
@@ -253,10 +292,14 @@
                         </div>
                         <div>
                             <label for="cadastro_inss" class="block text-sm font-medium text-gray-700">Já possui cadastro e senha para o INSS:</label>
-                            <select id="cadastro_inss" name="cadastro_inss" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                            <select id="cadastro_inss" name="cadastro_inss" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required onchange="toggleCadastroInssFields()">
                                 <option value="sim">Sim</option>
                                 <option value="nao">Não</option>
                             </select>
+                        </div>
+                        <div class="cadastro-inss-field" style="display: none;">
+                            <label for="senha_inss" class="block text-sm font-medium text-gray-700">Senha do INSS:</label>
+                            <input type="password" id="senha_inss" name="senha_inss" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
                         </div>
                         <div>
                             <label for="cadunico" class="block text-sm font-medium text-gray-700">Possuí o CadÚnico:</label>
@@ -295,7 +338,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="space-y-2">
                     <h2 class="text-xl font-semibold">Observações Adicionais:</h2>
                     <div>
